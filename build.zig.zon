@@ -1,0 +1,12 @@
+.{
+    .name = .sdk,
+    .version = "0.0.0",
+    .fingerprint = 0x720719688827b795,
+    .minimum_zig_version = "0.16.0",
+    .dependencies = .{},
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "src",
+    },
+}
