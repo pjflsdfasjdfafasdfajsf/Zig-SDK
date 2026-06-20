@@ -135,7 +135,7 @@ pub const RenderCommandBuffer = extern struct {
         };
     };
 
-    pub fn push(self: *RenderCommandBuffer, comptime T: type) !*T {
+    pub fn push(self: *RenderCommandBuffer, comptime T: type) std.mem.Allocator.Error!*T {
         const aligned_bytes_needed = std.mem.alignForward(u32, @sizeOf(T), 4);
 
         const has_enough_space = (self.len + aligned_bytes_needed) <= self.capacity;
@@ -152,7 +152,7 @@ pub const RenderCommandBuffer = extern struct {
         return error.OutOfMemory;
     }
 
-    pub fn draw(self: *RenderCommandBuffer, command: Command) !void {
+    pub fn draw(self: *RenderCommandBuffer, command: Command) std.mem.Allocator.Error!void {
         switch (command) {
             inline else => |payload| {
                 const T = @TypeOf(payload);
