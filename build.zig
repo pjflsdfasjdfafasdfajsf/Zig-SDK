@@ -4,25 +4,26 @@ pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{ .default_target = .{ .os_tag = .freestanding, .cpu_arch = .wasm32 } });
     const optimize = b.standardOptimizeOption(.{});
 
-    const sdk_path = b.path("src/main.zig");
-
-    _ = b.addModule("sdk", .{
-        .root_source_file = sdk_path,
+    const sdk = b.addModule("sdk", .{
+        .root_source_file = b.path("src/root.zig"),
         .target = target,
         .optimize = optimize,
+        .pic = true,
     });
 
     const exe = b.addExecutable(.{
         .name = "mod",
         .root_module = b.createModule(.{
-            .root_source_file = sdk_path,
+            .root_source_file = b.path("src/main.zig"),
             .target = target,
             .optimize = optimize,
-            .imports = &.{},
+            .imports = &.{
+                .{ .name = "sdk", .module = sdk },
+            },
             .pic = true,
         }),
     });
-    exe.entry = .{ .symbol_name = "guest_initialize" }; // make sure guest_initialize is compiled
+    exe.entry = .disabled;
     exe.rdynamic = true;
 
     b.installArtifact(exe);
